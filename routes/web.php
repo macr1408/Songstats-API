@@ -15,6 +15,8 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
     $router->get('auth', 'AuthController@authUser');
 });
 
+$router->get('/login', 'LoginController@login');
+
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return '';
 });

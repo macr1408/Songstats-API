@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
+use App\Http\Response\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Log\Logger;
 use App\Sdk\SpotifySdk;
@@ -33,7 +33,6 @@ class AuthController extends Controller
         } catch (ClientExceptionInterface $e) {
             return new JsonResponse($e->getResponse()->getContent(false), 422);
         }
-
         return new JsonResponse($res);
     }
 }
