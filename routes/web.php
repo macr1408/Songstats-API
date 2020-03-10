@@ -11,8 +11,11 @@
 |
 */
 
-$router->group(['prefix' => 'api/v1'], function () use ($router) {
-    $router->get('auth', 'AuthController@authUser');
+$router->group(['prefix' => 'api/v1', 'middleware' => 'cors'], function () use ($router) {
+    $router->post('auth', 'AuthController@authUser');
+    $router->options('/{all}', function ($request) {
+        return '';
+    });
 });
 
 $router->get('/login', 'LoginController@login');

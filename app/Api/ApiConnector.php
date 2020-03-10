@@ -2,8 +2,8 @@
 
 namespace App\Api;
 
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Contracts\HttpClient\ResponseInterface;
 
 abstract class ApiConnector
 {

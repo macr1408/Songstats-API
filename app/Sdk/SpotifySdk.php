@@ -4,6 +4,7 @@ namespace App\Sdk;
 
 use App\Api\SpotifyApi;
 use App\Api\SpotifyAuthApi;
+use Illuminate\Support\Facades\Log;
 
 class SpotifySdk
 {
@@ -12,6 +13,7 @@ class SpotifySdk
     private $redirectUrl;
     private $appId;
     private $appSecret;
+    private $accessToken;
 
     public function __construct(SpotifyApi $spotifyApi, SpotifyAuthApi $spotifyAuthApi)
     {
@@ -20,11 +22,22 @@ class SpotifySdk
         $this->redirectUrl = env('SPOTIFY_REDIRECT_URL');
         $this->appId = env('SPOTIFY_APP_ID');
         $this->appSecret = env('SPOTIFY_APP_SECRET');
+        $this->accessToken = '';
     }
 
     private function getAuthHeader(): string
     {
         return 'Basic ' . base64_encode($this->appId . ':' . $this->appSecret);
+    }
+
+    private function getAccessToken(): string
+    {
+        return 'Bearer ' . $this->accessToken;
+    }
+
+    public function setAccessToken(string $accessToken): void
+    {
+        $this->accessToken = $accessToken;
     }
 
     public function getLoginUrl(): string
@@ -50,5 +63,18 @@ class SpotifySdk
             'Authorization' => $this->getAuthHeader()
         ];
         return $this->spotifyAuthApi->post('/api/token', $body, $headers);
+    }
+
+    public function getUser(string $user = ''): array
+    {
+        $body = [];
+        $headers = [
+            'Authorization' => $this->getAccessToken()
+        ];
+        if (!$user) {
+            return $this->spotifyApi->get('/v1/me', $body, $headers);
+        } else {
+            return $this->spotifyApi->get('/v1/users/' . $user, $body, $headers);
+        }
     }
 }
