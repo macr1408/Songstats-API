@@ -42,6 +42,9 @@ class UserService
                     'api_token' => hash('sha256', $token)
                 ]
             );
+        } else {
+            $token = $this->str->random(80);
+            $user->update(['api_token' => hash('sha256', $token)]);
         }
         return ['id' => $user->getAttribute('id'), 'token' => $token];
     }
