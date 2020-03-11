@@ -35,19 +35,17 @@ class AuthController extends Controller
             $accessToken = $spotifySdk->auth($authCode);
             $spotifySdk->setAccessToken($accessToken['access_token']);
             $userData = $spotifySdk->getUser();
-            $userId = $this->userService->createUserAndToken($userData, $accessToken);
-            $res = 'User created successfully';
-
-            /* $res = $spotifySdk->auth($authCode);
-            $userId = $this->userService->createUser($res);
-            $spotifySdk->setAccessToken($this->userService->getUserAccessToken($userId));
-            $res = $spotifySdk->getUser();
-            $this->userService->storeUserData($res, $userId); */
+            $user = $this->userService->createUserAndToken($userData, $accessToken);
         } catch (ClientExceptionInterface $e) {
             $this->log->error($e->getResponse()->getContent(false));
             return new JsonResponse($e->getResponse()->getContent(false), 422);
         }
 
-        return new JsonResponse($res);
+        return new JsonResponse($user['token']);
+    }
+
+    public function test(Request $request)
+    {
+        return new JsonResponse('exito');
     }
 }

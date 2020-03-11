@@ -16,7 +16,7 @@ class Users extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('email')->unique()->nullable();
-            $table->rememberToken();
+            $table->string('api_token', 80)->unique()->nullable()->default(null);
             $table->timestamps();
         });
     }

@@ -5,33 +5,45 @@ namespace App\Services;
 use App\Repositories\AccessTokenRepository;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class UserService
 {
 
     private $userRepository;
     private $accessTokenRepository;
+    private $str;
 
-    public function __construct(UserRepository $userRepository, AccessTokenRepository $accessTokenRepository)
-    {
+    public function __construct(
+        UserRepository $userRepository,
+        AccessTokenRepository $accessTokenRepository,
+        Str $str
+    ) {
         $this->userRepository = $userRepository;
         $this->accessTokenRepository = $accessTokenRepository;
+        $this->str = $str;
     }
 
-    public function createUserAndToken(array $userData, array $accessToken): int
+    public function createUserAndToken(array $userData, array $accessToken): array
     {
-        $userId = $this->createUser($userData);
-        $this->createAccessToken($accessToken, $userId);
-        return $userId;
+        $user = $this->createUser($userData);
+        $this->createAccessToken($accessToken, $user['id']);
+        return $user;
     }
 
-    public function createUser(array $userData): int
+    public function createUser(array $userData): array
     {
         $user = $this->userRepository->get($userData['email'], 'email');
         if (empty($user)) {
-            $user = $this->userRepository->create(['email' => $userData['email']]);
+            $token = $this->str->random(80);
+            $user = $this->userRepository->create(
+                [
+                    'email' => $userData['email'],
+                    'api_token' => hash('sha256', $token)
+                ]
+            );
         }
-        return $user->getAttribute('id');
+        return ['id' => $user->getAttribute('id'), 'token' => $token];
     }
 
     public function createAccessToken(array $accessToken, int $userId = null): bool
