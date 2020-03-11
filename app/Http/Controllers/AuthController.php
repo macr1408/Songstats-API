@@ -11,7 +11,7 @@ use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 
 class AuthController extends Controller
 {
-    private $log;
+    private $logger;
     private $userService;
 
     /**
@@ -19,9 +19,9 @@ class AuthController extends Controller
      *
      * @return void
      */
-    public function __construct(Logger $log, UserService $userService)
+    public function __construct(Logger $logger, UserService $userService)
     {
-        $this->log = $log;
+        $this->logger = $logger;
         $this->userService = $userService;
     }
 
@@ -37,7 +37,7 @@ class AuthController extends Controller
             $userData = $spotifySdk->getUser();
             $user = $this->userService->createUserAndToken($userData, $accessToken);
         } catch (ClientExceptionInterface $e) {
-            $this->log->error($e->getResponse()->getContent(false));
+            $this->logger->error($e->getResponse()->getContent(false));
             return new JsonResponse($e->getResponse()->getContent(false), 422);
         }
 

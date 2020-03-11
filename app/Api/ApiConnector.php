@@ -2,7 +2,6 @@
 
 namespace App\Api;
 
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpClient\HttpClient;
 
 abstract class ApiConnector
@@ -25,7 +24,11 @@ abstract class ApiConnector
             $opts['body'] = $body;
         }
         $response = $this->client->request($method, $endpoint, $opts);
-        return json_decode($response->getContent(), true);
+        $response = $response->getContent();
+        if (empty($response)) {
+            return [];
+        }
+        return json_decode($response, true);
     }
 
     public function get(string $endpoint, array $body = [], array $headers = []): array

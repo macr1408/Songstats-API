@@ -19,7 +19,7 @@ $router->group(['prefix' => 'api/v1', 'middleware' => 'cors'], function () use (
 });
 
 $router->group(['prefix' => 'api/v1', 'middleware' => ['cors', 'auth']], function () use ($router) {
-    $router->get('/test', 'AuthController@test');
+    $router->get('/playing', 'PlayerController@current');
 });
 
 

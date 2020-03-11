@@ -4,7 +4,6 @@ namespace App\Sdk;
 
 use App\Api\SpotifyApi;
 use App\Api\SpotifyAuthApi;
-use Illuminate\Support\Facades\Log;
 
 class SpotifySdk
 {
@@ -76,5 +75,13 @@ class SpotifySdk
         } else {
             return $this->spotifyApi->get('/v1/users/' . $user, $body, $headers);
         }
+    }
+
+    public function getCurrentPlaying(): array
+    {
+        $headers = [
+            'Authorization' => $this->getAccessToken()
+        ];
+        return $this->spotifyApi->get('/v1/me/player/currently-playing', [], $headers);
     }
 }
