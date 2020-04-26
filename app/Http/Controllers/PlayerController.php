@@ -34,8 +34,20 @@ class PlayerController
             return new JsonResponse($e->getResponse()->getContent(false), 422);
         }
         if (empty($currentlyPlaying)) {
-            return new JsonResponse(['playing' => false]);
+            return new JsonResponse(['isPlaying' => false]);
         }
-        return new JsonResponse([]);
+        $artists = [];
+        foreach ($currentlyPlaying['item']['artists'] as $artist) {
+            $artists[] = $artist['name'];
+        }
+        $currentPercentage = ($currentlyPlaying['progress_ms'] * 100) / $currentlyPlaying['item']['duration_ms'];
+        $response = [
+            'isPlaying' => true,
+            'images' => $currentlyPlaying['item']['album']['images'],
+            'artists' => implode(', ', $artists),
+            'title' => $currentlyPlaying['item']['name'],
+            'currentPercentage' => round($currentPercentage)
+        ];
+        return new JsonResponse($response);
     }
 }
